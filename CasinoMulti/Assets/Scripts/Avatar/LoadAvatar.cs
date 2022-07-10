@@ -10,6 +10,9 @@ public class LoadAvatar : MonoBehaviour
     [SerializeField]
     private Transform avatarParent;
 
+    [SerializeField]
+    private Animator anim;
+
     private void Start()
     {
         Debug.Log($"Started loading avatar. [{Time.timeSinceLevelLoad:F2}]");
@@ -25,8 +28,13 @@ public class LoadAvatar : MonoBehaviour
             avatar.transform.SetParent(avatarParent);
 
             var animator = avatar.GetComponent<Animator>();
-
             if(animator) Destroy(animator);
+
+            if(anim)
+            {
+                anim.Rebind();
+                anim.Update(0f);
+            }
 
         };
         avatarLoader.OnFailed += (sender, args) =>
