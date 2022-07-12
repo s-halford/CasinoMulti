@@ -4,6 +4,7 @@ using UnityEngine;
 using Siccity.GLTFUtility;
 using ReadyPlayerMe;
 using Cinemachine;
+using Photon.Pun;
 
 public class GameManager : MonoBehaviour
 {
@@ -16,14 +17,29 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private CinemachineVirtualCamera cam;
 
-    private GameObject player;
+    [SerializeField]
+    private MonoBehaviour[] camScripts;
+
+    private GameObject playerClone;
     private Animator anim;
+    private PhotonView photonView;
 
     private void Start()
     {
-        player = Instantiate(playerPrefab, playerSpawnPosition.position, playerSpawnPosition.rotation);
-        anim = player.GetComponent<Animator>();
+        playerClone = PhotonNetwork.Instantiate(playerPrefab.name, playerSpawnPosition.position, playerSpawnPosition.rotation);
+        anim = playerClone.GetComponent<Animator>();
+        PhotonCheck();
         LoadAvatar();
+    }
+
+    private void PhotonCheck()
+    {
+        photonView = playerClone.GetComponent<PhotonView>();
+
+        foreach (MonoBehaviour script in camScripts)
+        {
+            script.enabled = photonView.IsMine;
+        }
     }
 
     private void LoadAvatar()
@@ -33,14 +49,15 @@ public class GameManager : MonoBehaviour
         var avatarLoader = new AvatarLoader();
         avatarLoader.OnCompleted += (sender, args) =>
         {
-            Player p = player.GetComponent<Player>();
-            cam.Follow = p.playerCameraRoot;
+            Player player = playerClone.GetComponent<Player>();
+            cam.Follow = player.playerCameraRoot;
+            player.PhotonCheck();
 
             Debug.Log($"Loaded avatar. [{Time.timeSinceLevelLoad:F2}]");
             Debug.Log($"{args.Avatar.gameObject} is imported!");
 
             var avatar = args.Avatar.gameObject;
-            avatar.transform.SetParent(player.transform);
+            avatar.transform.SetParent(playerClone.transform);
             avatar.transform.localPosition = Vector3.zero;
 
             var animator = avatar.GetComponent<Animator>();
@@ -51,7 +68,6 @@ public class GameManager : MonoBehaviour
                 anim.Rebind();
                 anim.Update(0f);
             }
-
         };
 
         avatarLoader.OnFailed += (sender, args) =>
