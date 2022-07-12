@@ -40,8 +40,8 @@ public class GameManager : MonoBehaviour
             Debug.Log($"{args.Avatar.gameObject} is imported!");
 
             var avatar = args.Avatar.gameObject;
-
             avatar.transform.SetParent(player.transform);
+            avatar.transform.localPosition = Vector3.zero;
 
             var animator = avatar.GetComponent<Animator>();
             if (animator) Destroy(animator);
