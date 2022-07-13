@@ -41,7 +41,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
     public override void OnJoinedRoom()
     {
-        PhotonNetwork.LoadLevel(1);
+        PhotonNetwork.LoadLevel("GameScene");
     }
 
     public override void OnDisconnected(DisconnectCause cause)
@@ -64,15 +64,16 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     {
         RoomOptions roomOptions = new RoomOptions();
         roomOptions.MaxPlayers = 100;
-        PhotonNetwork.CreateRoom(createRoom.text, roomOptions, TypedLobby.Default);
-
+        //PhotonNetwork.CreateRoom(createRoom.text, roomOptions, TypedLobby.Default);
+        PhotonNetwork.JoinOrCreateRoom("TEST", roomOptions, TypedLobby.Default);
     }
 
     public void OnClick_JoinBtn()
     {
         RoomOptions roomOptions = new RoomOptions();
         roomOptions.MaxPlayers = 100;
-        PhotonNetwork.JoinOrCreateRoom(joinRoom.text, roomOptions, TypedLobby.Default);
+        //PhotonNetwork.JoinOrCreateRoom(joinRoom.text, roomOptions, TypedLobby.Default);
+        PhotonNetwork.JoinOrCreateRoom("TEST", roomOptions, TypedLobby.Default);
     }
 
     public void OnClick_PlayNowBtn()

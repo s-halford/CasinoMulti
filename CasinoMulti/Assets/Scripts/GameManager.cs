@@ -27,20 +27,29 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         playerClone = PhotonNetwork.Instantiate(playerPrefab.name, playerSpawnPosition.position, playerSpawnPosition.rotation);
+        //playerClone = Instantiate(playerPrefab, playerSpawnPosition.position, playerSpawnPosition.rotation);
         anim = playerClone.GetComponent<Animator>();
-        PhotonCheck();
+        //PhotonCheck();
         LoadAvatar();
     }
 
-    private void PhotonCheck()
+    private void Update()
     {
-        photonView = playerClone.GetComponent<PhotonView>();
-
-        foreach (MonoBehaviour script in camScripts)
+        if (Input.GetKey(KeyCode.Escape))
         {
-            script.enabled = photonView.IsMine;
+            Application.Quit();
         }
     }
+
+    //private void PhotonCheck()
+    //{
+    //    photonView = playerClone.GetComponent<PhotonView>();
+
+    //    foreach (MonoBehaviour script in camScripts)
+    //    {
+    //        script.enabled = photonView.IsMine;
+    //    }
+    //}
 
     private void LoadAvatar()
     {
@@ -51,7 +60,7 @@ public class GameManager : MonoBehaviour
         {
             Player player = playerClone.GetComponent<Player>();
             cam.Follow = player.playerCameraRoot;
-            player.PhotonCheck();
+            //player.PhotonCheck();
 
             Debug.Log($"Loaded avatar. [{Time.timeSinceLevelLoad:F2}]");
             Debug.Log($"{args.Avatar.gameObject} is imported!");
